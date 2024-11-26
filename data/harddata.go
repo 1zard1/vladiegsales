@@ -2,10 +2,12 @@ package data
 
 import (
 	"time"
+
+	"github.com/hunter32292/go-server-example/pkg/models"
 )
 
-func GetHardcodedTrips() []trip.Trip {
-	Hardtrip1 := trip.Trip{
+func GetHardcodedTrips() []models.Trip {
+	Hardtrip1 := models.Trip{
 		ID:               "123123",                                                  // Уникальный идентификатор поездки.
 		FlightNumber:     "1010",                                                    // Номер рейса.
 		DepartureAirport: "Minsk",                                                   // Аэропорт вылета.
@@ -19,7 +21,7 @@ func GetHardcodedTrips() []trip.Trip {
 		BookingReference: "12312320",                                                // Номер бронирования.
 	}
 
-	Hardtrip2 := trip.Trip{
+	Hardtrip2 := models.Trip{
 		ID:               "123124",                                                  // Уникальный идентификатор поездки.
 		FlightNumber:     "1011",                                                    // Номер рейса.
 		DepartureAirport: "Minsk",                                                   // Аэропорт вылета.
@@ -33,7 +35,7 @@ func GetHardcodedTrips() []trip.Trip {
 		BookingReference: "12312324",                                                // Номер бронирования.
 	}
 
-	Hardtrip3 := trip.Trip{
+	Hardtrip3 := models.Trip{
 		ID:               "123125",                                                  // Уникальный идентификатор поездки.
 		FlightNumber:     "1012",                                                    // Номер рейса.
 		DepartureAirport: "Minsk",                                                   // Аэропорт вылета.
@@ -47,7 +49,7 @@ func GetHardcodedTrips() []trip.Trip {
 		BookingReference: "12312325",                                                // Номер бронирования.
 	}
 
-	Hardtrip4 := trip.Trip{
+	Hardtrip4 := models.Trip{
 		ID:               "123126",                                                  // Уникальный идентификатор поездки.
 		FlightNumber:     "1013",                                                    // Номер рейса.
 		DepartureAirport: "Minsk",                                                   // Аэропорт вылета.
@@ -61,7 +63,7 @@ func GetHardcodedTrips() []trip.Trip {
 		BookingReference: "12312326",                                                // Номер бронирования.
 	}
 
-	Hardtrip5 := trip.Trip{
+	Hardtrip5 := models.Trip{
 		ID:               "123127",                                                  // Уникальный идентификатор поездки.
 		FlightNumber:     "1014",                                                    // Номер рейса.
 		DepartureAirport: "Minsk",                                                   // Аэропорт вылета.
@@ -75,5 +77,5 @@ func GetHardcodedTrips() []trip.Trip {
 		BookingReference: "12312327",                                                // Номер бронирования.
 	}
 
-	return []trip.Trip{Hardtrip1, Hardtrip2, Hardtrip3, Hardtrip4, Hardtrip5}
+	return []models.Trip{Hardtrip1, Hardtrip2, Hardtrip3, Hardtrip4, Hardtrip5}
 }

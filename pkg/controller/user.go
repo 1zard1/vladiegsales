@@ -10,12 +10,14 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/hunter32292/go-server-example/data"
 	"github.com/hunter32292/go-server-example/pkg/dao"
 	"github.com/hunter32292/go-server-example/pkg/models"
 )
 
 // UserData - The collection of Users retained in memory as a slice of structs
 var UserData []*models.User
+var TripData []*models.Trip
 
 // SetupUserHandler - setup all the controller paths for Users
 func SetupUserHandler(handler *http.ServeMux) {
@@ -25,11 +27,17 @@ func SetupUserHandler(handler *http.ServeMux) {
 	handler.HandleFunc("/user/replace", Replace)
 	handler.HandleFunc("/user/delete", Delete)
 	handler.HandleFunc("/trip/search", TripSearch)
-	LoadData()
+	// LoadUserData()
+	LoadTripData()
+}
+
+func LoadTripData() {
+	TripData := data.GetHardcodedTrips()
+	log.Println("Trip data loaded", TripData)
 }
 
 // LoadData - Setup Data For Users
-func LoadData() {
+func LoadUserData() {
 	log.Println("Load Data into Memory")
 	data, err := dao.FileLoadInData("data/MOCK_DATA.csv")
 	if err != nil {
@@ -55,13 +63,13 @@ func TripSearch(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Получение параметров запроса
-	start := r.URL.Query().Get("start")
-	end := r.URL.Query().Get("end")
+	start := r.Body.Read().("start")
+	end := r.Body.Query().Get("end")
 	departure := r.URL.Query().Get("departure")
 	arrival := r.URL.Query().Get("arrival")
 
 	// Парсинг времени
-	startTime, err := time.Parse("2006-01-02", start)
+	startTime, err := time.Parse("2006-01-02", start) // ("01/02/2006", "10/15/1983")
 	if err != nil {
 		http.Error(w, "Invalid start date", http.StatusBadRequest)
 		return
@@ -72,15 +80,14 @@ func TripSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var filteredTrips []Trip
-	for _, trip := range trips {
+	var filteredTrips []models.Trip
+	for _, trip := range TripData {
 		if trip.DepartureTime.After(startTime) && trip.DepartureTime.Before(endTime) &&
 			trip.DepartureAirport == departure && trip.ArrivalAirport == arrival {
-			filteredTrips = append(filteredTrips, trip)
+			filteredTrips = append(filteredTrips, *trip)
 		}
 	}
 
-	// Отправка ответа
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(filteredTrips); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
