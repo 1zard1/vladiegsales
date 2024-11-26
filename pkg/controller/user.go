@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/hunter32292/go-server-example/pkg/dao"
 	"github.com/hunter32292/go-server-example/pkg/models"
@@ -23,11 +24,11 @@ func SetupUserHandler(handler *http.ServeMux) {
 	handler.HandleFunc("/user/update", Update)
 	handler.HandleFunc("/user/replace", Replace)
 	handler.HandleFunc("/user/delete", Delete)
-
+	handler.HandleFunc("/trip/search", TripSearch)
 	LoadData()
 }
 
-//LoadData - Setup Data For Users
+// LoadData - Setup Data For Users
 func LoadData() {
 	log.Println("Load Data into Memory")
 	data, err := dao.FileLoadInData("data/MOCK_DATA.csv")
@@ -44,6 +45,45 @@ func LoadData() {
 			continue
 		}
 		UserData = append(UserData, &models.User{Id: index, First_name: item[1], Last_name: item[2], Email: item[3]})
+	}
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+// TripSearch - a validtrips
+func TripSearch(w http.ResponseWriter, r *http.Request) {
+	log.Println("Show Trip Data")
+	w.Header().Set("Content-Type", "application/json")
+
+	// Получение параметров запроса
+	start := r.URL.Query().Get("start")
+	end := r.URL.Query().Get("end")
+	departure := r.URL.Query().Get("departure")
+	arrival := r.URL.Query().Get("arrival")
+
+	// Парсинг времени
+	startTime, err := time.Parse("2006-01-02", start)
+	if err != nil {
+		http.Error(w, "Invalid start date", http.StatusBadRequest)
+		return
+	}
+	endTime, err := time.Parse("2006-01-02", end)
+	if err != nil {
+		http.Error(w, "Invalid end date", http.StatusBadRequest)
+		return
+	}
+
+	var filteredTrips []Trip
+	for _, trip := range trips {
+		if trip.DepartureTime.After(startTime) && trip.DepartureTime.Before(endTime) &&
+			trip.DepartureAirport == departure && trip.ArrivalAirport == arrival {
+			filteredTrips = append(filteredTrips, trip)
+		}
+	}
+
+	// Отправка ответа
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(filteredTrips); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 

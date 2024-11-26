@@ -2,7 +2,6 @@ package data
 
 import (
 	"time"
-	"vladiegsales/pkg/models/trip"
 )
 
 func GetHardcodedTrips() []trip.Trip {
