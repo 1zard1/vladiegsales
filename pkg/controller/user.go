@@ -62,19 +62,22 @@ func TripSearch(w http.ResponseWriter, r *http.Request) {
 	log.Println("Show Trip Data")
 	w.Header().Set("Content-Type", "application/json")
 
-	// Получение параметров запроса
-	start := r.Body.Read().("start")
-	end := r.Body.Query().Get("end")
-	departure := r.URL.Query().Get("departure")
-	arrival := r.URL.Query().Get("arrival")
+	// Получение параметров запроса из тела
+	var params models.BodyParams
+
+	err := json.NewDecoder(r.Body).Decode(&params)
+	if err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
 
 	// Парсинг времени
-	startTime, err := time.Parse("2006-01-02", start) // ("01/02/2006", "10/15/1983")
+	startTime, err := time.Parse("2006-01-02", params.Start)
 	if err != nil {
 		http.Error(w, "Invalid start date", http.StatusBadRequest)
 		return
 	}
-	endTime, err := time.Parse("2006-01-02", end)
+	endTime, err := time.Parse("2006-01-02", params.End)
 	if err != nil {
 		http.Error(w, "Invalid end date", http.StatusBadRequest)
 		return
@@ -83,7 +86,7 @@ func TripSearch(w http.ResponseWriter, r *http.Request) {
 	var filteredTrips []models.Trip
 	for _, trip := range TripData {
 		if trip.DepartureTime.After(startTime) && trip.DepartureTime.Before(endTime) &&
-			trip.DepartureAirport == departure && trip.ArrivalAirport == arrival {
+			trip.DepartureAirport == params.Departure && trip.ArrivalAirport == params.Arrival {
 			filteredTrips = append(filteredTrips, *trip)
 		}
 	}
