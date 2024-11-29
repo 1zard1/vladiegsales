@@ -8,7 +8,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/hunter32292/go-server-example/data"
 	"github.com/hunter32292/go-server-example/pkg/dao"
@@ -70,24 +69,14 @@ func TripSearch(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-
-	// Парсинг времени
-	startTime, err := time.Parse("2006-01-02", params.Start)
-	if err != nil {
-		http.Error(w, "Invalid start date", http.StatusBadRequest)
-		return
-	}
-	endTime, err := time.Parse("2006-01-02", params.End)
-	if err != nil {
-		http.Error(w, "Invalid end date", http.StatusBadRequest)
-		return
-	}
-
+	//
 	var filteredTrips []models.Trip
-	for _, trip := range TripData {
-		if trip.DepartureTime.After(startTime) && trip.DepartureTime.Before(endTime) &&
-			trip.DepartureAirport == params.Departure && trip.ArrivalAirport == params.Arrival {
-			filteredTrips = append(filteredTrips, *trip)
+	for _, trip := range data.GetHardcodedTrips() {
+		if trip.DepartureTime.After(params.Start) &&
+		 trip.DepartureTime.Before(params.End) &&
+			trip.DepartureAirport == params.Departure &&
+			 trip.ArrivalAirport == params.Arrival {
+			filteredTrips = append(filteredTrips, trip)
 		}
 	}
 

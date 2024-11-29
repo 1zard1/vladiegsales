@@ -12,7 +12,7 @@ func GetHardcodedTrips() []models.Trip {
 		FlightNumber:     "1010",                                                    // Номер рейса.
 		DepartureAirport: "Minsk",                                                   // Аэропорт вылета.
 		ArrivalAirport:   "Moscow",                                                  // Аэропорт прибытия.
-		DepartureTime:    time.Date(2024, time.November, 24, 14, 0, 0, 0, time.UTC), // Время вылета.
+		DepartureTime:    time.Date(2024, time.November, 24, 11, 0, 0, 0, time.UTC), // Время вылета.
 		ArrivalTime:      time.Date(2024, time.November, 25, 14, 0, 0, 0, time.UTC), // Время прибытия.
 		SeatNumber:       "20",                                                      // Номер места.
 		TicketPrice:      500.01,                                                    // Стоимость билета.
